@@ -34,6 +34,11 @@ const IncomdeSchema = new mongoose.Schema({
         trim: true,
         maxLenght: true
     },
+    status: {
+        type: Boolean,
+        default: true,
+        required: true
+    }
 }, { timestamps: true })
 
 module.exports = mongoose.model('Income', IncomdeSchema)

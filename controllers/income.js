@@ -28,18 +28,17 @@ exports.addIncome = async (req, res) => {
 
 exports.getIncomes = async (req, res) => {
     try {
-        const incomes = await IncomeSchema.find().sort({ createdAt: -1 })
+        const incomes = await IncomeSchema.find({status:true}).sort({ createdAt: -1})
         res.status(200).json(incomes)
-    } catch (error) {
-
-        res.status(500).json({ Message: 'Server Error' })
+    } catch (err) {
+        res.status(500).json({ Message: 'Server Error', error: err })
     }
 }
 
 exports.deleteIncome = async (req, res) => {
 
-    const {id} =  req.params;
-    IncomeSchema.findByIdAndDelete(id).then((result) => {
+    const { id } = req.params;
+    IncomeSchema.findByIdAndUpdate(id, { status: false }).then((result) => {
         res.status(200).json({ Message: 'Income Deleted', result })
     }).catch((err) => {
         res.status(500).json({ Message: 'Server Error' })
