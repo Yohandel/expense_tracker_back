@@ -1,26 +1,38 @@
 const UserSchema = require('../models/userModel.js')
+const bcrypt = require("bcrypt")
 
 exports.addUser = async (req, res) => {
-    const { name, lastName, email, password, birthday, type} = req.body
-    const user = UserSchema({
-        name,
-        lastName,
-        email,
-        password,
-        birthday,
-        type
-    })
+    const { name, lastName, email, password, birthday, type } = req.body
+    const existingUser = await UserSchema.findOne({ email: email })
 
-    try {
-        if (!name || !lastName || !email || !password || !birthday || !type) {
-            return res.status(400).json({ message: 'All fields are required' })
-        }
-        user.save()
-        res.status(200).json({ Message: 'User Created', user })
-    } catch (error) {
-
-        res.status(500).json({ Message: 'Server Error' })
+    if (existingUser) {
+        res.status(400).send({ message: 'Este correo ya esta en uso' })
+        return
     }
+
+    bcrypt.hash(password, 10, function (err, hash) {
+        const user = UserSchema({
+            name,
+            lastName,
+            email,
+            password: hash,
+            birthday,
+            type
+        })
+        try {
+            if (!name || !lastName || !email || !password || !birthday || !type) {
+                return res.status(400).json({ message: 'All fields are required' })
+            }
+            user.save()
+            res.status(200).json({ Message: 'User Created', id: user._id })
+        } catch (error) {
+
+            res.status(500).json({ Message: 'Server Error' })
+        }
+    });
+
+
+
 }
 
 exports.getUsers = async (req, res) => {
@@ -39,5 +51,12 @@ exports.deleteUser = async (req, res) => {
         res.status(200).json({ Message: 'User Deleted', result })
     }).catch((err) => {
         res.status(500).json({ Message: 'Server Error' })
+    });
+}
+
+function encryptPassword(password) {
+    bcrypt.hash(password, 10, function (err, hash) {
+        let encryptedPassword = hash
+        return encryptedPassword
     });
 }
