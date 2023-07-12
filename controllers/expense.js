@@ -29,15 +29,12 @@ exports.addExpense = async (req, res) => {
 }
 
 exports.getExpenses = async (req, res) => {
-    // if (!req.headers.authorization) {
-    //     return res.status(401).json({ error: "Not Authorized" });
-    // }
+    if (!req.headers.authorization) {
+        return res.status(401).json({ error: "Not Authorized" });
+    }
 
-    // const authHeader = req.headers.authorization;
-    // const token = authHeader.split(" ")[1];
-
-    // const {name} = jsonwebtoken.verify(token, process.env.JWT_SECRET)
-
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(" ")[1];
 
     try {
         const expenses = await ExpenseSchema.find({ status: true }).sort({ createdAt: -1 })
