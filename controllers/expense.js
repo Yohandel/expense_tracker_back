@@ -36,13 +36,25 @@ exports.getExpenses = async (req, res) => {
     const authHeader = req.headers.authorization;
     const token = authHeader.split(" ")[1];
 
-    try {
-        const expenses = await ExpenseSchema.find({ status: true }).sort({ createdAt: -1 })
-        res.status(200).json(expenses)
-    } catch (error) {
+    jsonwebtoken.verify(token, process.env.JWT_SECRET, async (err, decoded) =>{
 
-        res.status(500).json({ Message: 'Server Error' })
-    }
+        if (decoded) {
+            
+            try {
+                const expenses = await ExpenseSchema.find({ status: true }).sort({ createdAt: -1 })
+                res.status(200).json(expenses)
+            } catch (error) {
+        
+                res.status(500).json({ Message: 'Server Error' })
+            }
+        }
+        else{
+            res.status(401).json(err.message)
+        }
+
+
+    })
+
 }
 
 exports.deleteExpense = async (req, res) => {
