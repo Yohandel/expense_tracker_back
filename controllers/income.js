@@ -2,6 +2,13 @@ const IncomeSchema = require('../models/incomdeModel')
 const jsonwebtoken = require("jsonwebtoken");
 
 exports.addIncome = async (req, res) => {
+    if (!req.headers.authorization) {
+        return res.status(401).json({ error: "Not Authorized" });
+    }
+
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(" ")[1];
+
     const { title, amount, category, description, date } = req.body
     const income = IncomeSchema({
         title,
@@ -28,15 +35,12 @@ exports.addIncome = async (req, res) => {
 }
 
 exports.getIncomes = async (req, res) => {
-    // if (!req.headers.authorization) {
-    //     return res.status(401).json({ error: "Not Authorized" });
-    // }
+    if (!req.headers.authorization) {
+        return res.status(401).json({ error: "Not Authorized" });
+    }
 
-    // const authHeader = req.headers.authorization;
-    // const token = authHeader.split(" ")[1];
-
-    // const {name} = jsonwebtoken.verify(token, process.env.JWT_SECRET)
-
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(" ")[1];
 
     try {
         const incomes = await IncomeSchema.find({ status: true }).sort({ createdAt: -1 })

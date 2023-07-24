@@ -24,7 +24,7 @@ exports.addUser = async (req, res) => {
                 return res.status(400).json({ message: 'All fields are required' })
             }
             user.save()
-            res.status(200).json({ Message: 'User Created', id: user._id })
+            res.status(200).json({ Message: 'User Created', user: user })
         } catch (error) {
 
             res.status(500).json({ Message: 'Server Error' })
