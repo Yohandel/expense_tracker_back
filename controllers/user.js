@@ -61,7 +61,7 @@ exports.getUsers = async (req, res) => {
                 res.status(500).json({ Message: 'Server Error', error: err })
             }
         } else {
-            res.status(401).json(err.message)
+            res.status(401).json(err)
         }
     })
 

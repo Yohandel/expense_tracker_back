@@ -44,29 +44,13 @@ exports.addIncome = async (req, res) => {
 }
 
 exports.getIncomes = async (req, res) => {
-    if (!req.headers.authorization) {
-        return res.status(401).json({ error: "Not Authorized" });
+
+    try {
+        const incomes = await IncomeSchema.find({ status: true }).sort({ createdAt: -1 })
+        res.status(200).json(incomes)
+    } catch (err) {
+        res.status(500).json({ Message: 'Server Error', error: err })
     }
-
-    const authHeader = req.headers.authorization;
-    const token = authHeader.split(" ")[1];
-
-    jsonwebtoken.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
-        if (decoded) {
-            try {
-                const incomes = await IncomeSchema.find({ status: true }).sort({ createdAt: -1 })
-                res.status(200).json(incomes)
-            } catch (err) {
-                res.status(500).json({ Message: 'Server Error', error: err })
-            }
-        }
-
-        else {
-            res.status(401).json(err.message)
-        }
-    })
-
-
 }
 
 exports.deleteIncome = async (req, res) => {
