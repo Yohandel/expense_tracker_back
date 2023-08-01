@@ -26,7 +26,7 @@ exports.addExpense = async (req, res) => {
                     return res.status(400).json({ message: 'All fields are required' })
                 }
                 if (amount <= 0 || !amount === 'number') {
-                    return res.status(400).json({ message: 'Amount must ve a positive number' })
+                    return res.status(400).json({ message: 'Amount must be a positive number' })
                 }
 
                 expense.save()
