@@ -49,21 +49,12 @@ exports.addUser = async (req, res) => {
 
 exports.getUsers = async (req, res) => {
 
-    const authHeader = req.headers.authorization
-    const token = authHeader.split("")[1];
-
-    jsonwebtoken.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
-        if (decoded) {
-            try {
-                const users = await UserSchema.find({ status: true }).sort({ createdAt: -1 })
-                res.status(200).json(users)
-            } catch (err) {
-                res.status(500).json({ Message: 'Server Error', error: err })
-            }
-        } else {
-            res.status(401).json(err)
-        }
-    })
+    try {
+        const users = await UserSchema.find({ status: true }).sort({ createdAt: -1 })
+        res.status(200).json(users)
+    } catch (err) {
+        res.status(500).json({ Message: 'Server Error', error: err })
+    }
 
 
 }
