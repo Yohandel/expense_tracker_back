@@ -4,14 +4,20 @@ const { mongoDb } = require('./db/mongodb');
 const { readdirSync } = require('fs');
 require('dotenv').config()
 const jwt = require("jsonwebtoken");
+const cookieParser = require('cookie-parser')
 
 const PORT = process.env.PORT
 
 const app = express()
+const corsOptions = {
+    origin: true, //included origin as true
+    credentials: true, //included credentials as true
+};
 
 //middlewares
 app.use(express.json())
-app.use(cors())
+app.use(cors(corsOptions))
+app.use(cookieParser())
 
 
 //routes
@@ -23,20 +29,6 @@ const server = () => {
     mongoDb()
     app.listen(PORT, () => {
         console.log('Listening to port', PORT);
-    })
-}
-
-function authenticateToken(req, res, next) {
-
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(" ")[1];
-    console.log(token);
-    if (token === null) return res.status(401)
-
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-        if (err) return res.status(403)
-        req.user = decoded
-        next();
     })
 }
 
