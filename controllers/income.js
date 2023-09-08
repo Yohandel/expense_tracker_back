@@ -23,7 +23,7 @@ exports.addIncome = async (req, res) => {
                 if (!title || !amount || !category || !description || !date) {
                     return res.status(400).json({ message: 'All fields are required' })
                 }
-                if (amount <= 0 || !amount === 'number') {
+                if (amount <= 0 || amount === '') {
                     return res.status(400).json({ message: 'Amount must be a positive number' })
                 }
 
@@ -31,7 +31,7 @@ exports.addIncome = async (req, res) => {
                 res.status(200).json({ Message: 'Income Created', income })
             } catch (error) {
 
-                res.status(500).json({ Message: 'Server Error' })
+                res.status(500).json({ Message: 'There has been a problem attempting to create the income, please communicate with your administrator or try later' })
             }
         } else {
             res.status(401).json(err.message)
@@ -49,7 +49,7 @@ exports.getIncomes = async (req, res) => {
         const incomes = await IncomeSchema.find({ status: true }).sort({ createdAt: -1 })
         res.status(200).json(incomes)
     } catch (err) {
-        res.status(500).json({ Message: 'Server Error', error: err })
+        res.status(500).json({ Message: 'There has been a problem attempting to get the incomes list, please communicate with your administrator or try later', error: err })
     }
 }
 
@@ -69,7 +69,7 @@ exports.deleteIncome = async (req, res) => {
             IncomeSchema.findByIdAndUpdate(id, { status: false }).then((result) => {
                 res.status(200).json({ Message: 'Income Deleted', result })
             }).catch((err) => {
-                res.status(500).json({ Message: 'Server Error' })
+                res.status(500).json({ Message: 'There has been a problem attempting to delete the income, please communicate with your administrator or try later' })
             });
         }
         else {
